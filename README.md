@@ -8,3 +8,9 @@ composer install
 php artisan serve
 ```
 open a web browser to localhost:8000
+
+
+# Unit tests  
+```
+./vendor/bin/phpunit
+```
