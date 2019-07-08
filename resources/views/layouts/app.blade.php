@@ -16,11 +16,13 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
     </head>
     <body>
-        @section('sidebar')
-        @show
-
-        <div class="container">
-            @yield('content')
-        </div>      
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Civic Plus Calendar</h1>
+    <p class="lead">Click on a event to see more details. Click on a date to add a new event.</p>
+  </div>
+</div>   
+        <div style="float: clear;"></div>
+        @yield('content')
     </body>
 </html>

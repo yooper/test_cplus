@@ -10,6 +10,11 @@ use App\Models\CalendarEvent;
  */
 class CalendarApi 
 {
+    /**
+     * Used in conjunction with the Auth token
+     */
+    const BEARER_TOKEN = ' Bearer ';
+    
     protected $requestUrlPrefix;
     protected $clientId;
     protected $clientSecret;
@@ -41,6 +46,10 @@ class CalendarApi
         return !empty($this->authToken);
     }
     
+    /**
+     * Get the auth token
+     * @todo Cache the token until its expiration
+     */
     public function authenticate()
     {
         $client = new \GuzzleHttp\Client();
@@ -56,7 +65,7 @@ class CalendarApi
         $response = $client->request('POST', $this->getApiUrl()."Events",
                 [
                     'json' => $calendarEvent->toArray(),
-                    'headers' => ['Authorization' => $this->getAuthToken()]
+                    'headers' => ['Authorization' => self::BEARER_TOKEN.$this->getAuthToken()]
                 ]);
 
         return $response->getStatusCode() === 201;        
@@ -67,7 +76,7 @@ class CalendarApi
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $this->getApiUrl()."Events/{$calendarEvent->getId()}",
                 [
-                    'headers' => ['Authorization' => $this->getAuthToken()]
+                    'headers' => ['Authorization' => self::BEARER_TOKEN.$this->getAuthToken()]
                 ]);
         
         $data = json_decode($response->getBody(), true);
@@ -85,7 +94,7 @@ class CalendarApi
         $url = $this->getApiUrl()."Events?".http_build_query($params);
         $response = $client->request('GET', $url,
                 [
-                    'headers' => ['Authorization' => $this->getAuthToken()]
+                    'headers' => ['Authorization' => self::BEARER_TOKEN.$this->getAuthToken()]
                 ]);
 
         $data = json_decode($response->getBody(), true) ?? ['total' => 0, 'items' => 0];        

@@ -54,7 +54,7 @@ class CalendarEvent implements \MaddHatter\LaravelFullcalendar\IdentifiableEvent
 
     public function getTitle(): string 
     {
-        return $this->title . "\n\n". $this->getDescription();
+        return $this->title;
     }
 
     public function isAllDay(): bool 

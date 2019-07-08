@@ -43,7 +43,7 @@ class CalendarController extends Controller
             $events = [];
         }
         
-        // filter events by keyword
+        // filter events by keyword, not implemented
         if($request->has('filter'))
         {
             $filterOn = strtolower($request->get('filter'));        
@@ -65,23 +65,37 @@ class CalendarController extends Controller
     
     public function addEvent(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validate = [
            'startDate' => 'required',
            'endDate' => 'required',
            'title' => 'required',
            'description' => 'required'                        
-        ]);
+        ];
+        
+        $validator = Validator::make($request->all(), $validate);
         
         // Validate the input and return correct response
         if ($validator->fails())
         {
-            return Response::json(array(
+            return Response::json([
                 'success' => false,
                 'errors' => $validator->getMessageBag()->toArray()
+            ], 400); // 400 being the HTTP code for an invalid request.
+        } 
 
-            ), 400); // 400 being the HTTP code for an invalid request.
-        }
-        return Response::json(array('success' => true), 200);        
+        $api = $this->getApiInstance();
+        $newEvent = new CalendarEvent([
+            'startDate' => $request->input('startDate'),
+            'endDate' => $request->input('endDate'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),         
+        ]);
+        
+        if($api->addEvent($newEvent))
+        {
+            return Response::json(['success' => true], 200);  
+        }        
+        return Response::json(['success' => false, 'errors'=>['General Error' => ['API could not save the event']] ], 200);  
     }
     
     public function get(Request $request)
@@ -96,11 +110,11 @@ class CalendarController extends Controller
         // Validate the input and return correct response
         if ($validator->fails())
         {
-            return Response::json(array(
+            return Response::json([
                 'success' => false,
                 'errors' => $validator->getMessageBag()->toArray()
 
-            ), 400); // 400 being the HTTP code for an invalid request.
+            ], 400); // 400 being the HTTP code for an invalid request.
         } 
         elseif($calendarEvent === null)
         {
@@ -110,6 +124,6 @@ class CalendarController extends Controller
 
             ), 401);           
         }
-        return Response::json(array('success' => true, 'event' => $calendarEvent->toArray()), 200);                 
+        return Response::json(['success' => true, 'event' => $calendarEvent->toArray() ], 200);                 
     }            
 }
